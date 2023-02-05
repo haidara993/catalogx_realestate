@@ -1,0 +1,21 @@
+{
+    "id":2,
+    "latitude":35.55555,
+    "longitude":35.6666,
+    "images":[
+        "images path",
+        "images path",
+        "images path",
+        "images path"
+    ],
+    "price":35000000,
+    "address":"jableh -alnaqaa",
+    "addressAr":"جبلة - النقعة",
+    "room_details":[
+        {"room":"bedroom","height":2,"width":2,"level":0},
+        {"room":"bathroom","height":2,"width":2,"level":0},
+        {"room":"kitchen","height":2,"width":2,"level":0}
+    ],
+    "video":"url",
+    "broker":123 
+}
