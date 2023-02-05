@@ -102,7 +102,7 @@ class ControlView extends GetWidget<ControlViewModel> {
             ? TextDirection.rtl
             : TextDirection.ltr,
         child: Obx(() {
-          return (Get.find<AuthViewModel>().isLogged.value)
+          return !(Get.find<AuthViewModel>().isLogged.value)
               ? PhoneScreen()
               : !(Get.find<NetworkController>().connectionStatus.value == 1 ||
                       Get.find<NetworkController>().connectionStatus.value == 2)

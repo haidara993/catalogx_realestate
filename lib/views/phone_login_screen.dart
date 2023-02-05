@@ -157,7 +157,7 @@ class PhoneLoginScreen extends GetWidget<AuthViewModel> {
                         onPressed: () {
                           if (_registerformKey.currentState!.validate()) {
                             _registerformKey.currentState?.save();
-                            authcontroller.login();
+                            // authcontroller.login();
                           }
                         },
                         child: Row(

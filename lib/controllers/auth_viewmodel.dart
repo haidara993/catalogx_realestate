@@ -52,7 +52,6 @@ class AuthViewModel extends GetxController {
 
     if (token != "") {
       var str = token;
-      print(str);
       var jwt = str.split(".");
 
       if (jwt.length != 3) {
@@ -60,12 +59,12 @@ class AuthViewModel extends GetxController {
       } else {
         var payload =
             json.decode(ascii.decode(base64.decode(base64.normalize(jwt[1]))));
-        print(payload["exp"] * 1000000);
         if (DateTime.fromMillisecondsSinceEpoch(
                 (payload["exp"].toInt()) * 1000000)
             .isAfter(DateTime.now())) {
           isLogged.value = true;
-          getUserInfo("23");
+          var userId = prefs.getString("userId");
+          getUserInfo(userId!);
         } else {
           isLogged.value = false;
         }
@@ -75,8 +74,9 @@ class AuthViewModel extends GetxController {
     }
 
     _smsReceiver = SmsReceiver(onSmsReceived, onTimeout: onTimeout);
-    _startListening();
-
+    if (!isLogged.value) {
+      _startListening();
+    }
     super.onInit();
   }
 
@@ -115,6 +115,7 @@ class AuthViewModel extends GetxController {
     RegExp regExp = RegExp(r'\d{5}');
     code = regExp.stringMatch(message!);
     smsCodeController.text = code!;
+    update();
     checkMessageCode();
     _stopListening();
     update();
@@ -142,7 +143,7 @@ class AuthViewModel extends GetxController {
     prefs.setInt("appMode", mode);
   }
 
-  void login() async {
+  void register() async {
     _loading.value = true;
     update();
     prefs = await SharedPreferences.getInstance();
@@ -160,9 +161,9 @@ class AuthViewModel extends GetxController {
       var result = respStr.substring(12);
       var res = jsonDecode(result);
       prefs.setString("token", res["success"]["token"]);
-      prefs.setString("userId", res["success"]["id"]);
+      prefs.setString("userId", res["success"]["id"].toString());
       prefs.setString("phone", phone!);
-      getUserInfo(res["success"]["id"]);
+      getUserInfo(res["success"]["id"].toString());
       Get.to(SmsScreen());
 
       _loading.value = false;
@@ -201,11 +202,7 @@ class AuthViewModel extends GetxController {
     var response = await request.send();
 
     if (response.statusCode == 200) {
-      // String respStr = await response.stream.bytesToString();
-      // var res = jsonDecode(respStr);
-      // prefs.setString("token", res["success"]["token"]);
-      // prefs.setString("userId", res["success"]["name"]);
-      // Get.to(SmsScreen());
+      print("asdasd");
       isLogged.value = true;
       Get.back();
       _loading.value = false;
