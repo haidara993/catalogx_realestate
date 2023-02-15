@@ -80,6 +80,7 @@ dependencies:
   liquid_pull_to_refresh: ^3.0.1
   firebase_core: ^2.4.1
   expandable: ^5.0.1
+  firebase_messaging: ^14.2.1
 
 dev_dependencies:
   flutter_test:

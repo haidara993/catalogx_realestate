@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:catalog/controllers/auth_viewmodel.dart';
 import 'package:catalog/helpers/http_helper.dart';
 import 'package:catalog/models/broker.dart';
 import 'package:catalog/models/item_key_model.dart';
@@ -722,7 +723,6 @@ class PropertyController extends GetxController {
           isAltEnergyVisible = false; //17
           isWaterWellVisible = false; //18
           isGreenHouseVisible = false; //19
-
         }
         break;
       case 12:
@@ -918,7 +918,8 @@ class PropertyController extends GetxController {
     request.fields['hanger'] = ishanger.toString();
     request.fields['address_latitude'] = address_latitude.toString();
     request.fields['address_longitude'] = address_longitude.toString();
-    request.fields['user_id'] = 1.toString();
+    request.fields['user_id'] =
+        Get.find<AuthViewModel>().userModel!.id!.toString();
     request.fields['state_id'] = _state.id.toString();
     request.fields['type_id'] = _typeValue.id.toString();
     request.fields['prore_id'] = _prore.id.toString();

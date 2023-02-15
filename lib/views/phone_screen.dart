@@ -90,7 +90,7 @@ class PhoneScreen extends GetWidget<AuthViewModel> {
                                     passcontroller.obscurePassword
                                         ? Icons.visibility
                                         : Icons.visibility_off,
-                                    color: Colors.blue,
+                                    color: Colors.grey,
                                   ),
                                 )),
                             onSaved: (password) {
@@ -114,6 +114,9 @@ class PhoneScreen extends GetWidget<AuthViewModel> {
                             initialCountryCode: 'SY',
                             keyboardType: TextInputType.number,
                             countries: ['SY'],
+                            showDropdownIcon: false,
+                            flagsButtonMargin:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
                             validator: (text) {
                               if (text == null || text.number.isEmpty) {
                                 return 'emptytextfieldvalidation'.tr;

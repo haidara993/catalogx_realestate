@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:catalog/controllers/auth_viewmodel.dart';
 import 'package:catalog/controllers/control_viewmodel.dart';
 import 'package:catalog/controllers/property_controller.dart';
 import 'package:catalog/models/pinned_estate.dart';
@@ -190,7 +191,8 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                   onPressed: () async {
                     PinnedPropertyModel pinnedproperty = PinnedPropertyModel(
-                        userId: "23",
+                        userId:
+                            Get.find<AuthViewModel>().userModel!.id!.toString(),
                         propertyId:
                             propertycontroller.home.realEstate!.id.toString(),
                         brokerId: propertycontroller.broker.id!.toString(),

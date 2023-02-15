@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sms_receiver/sms_receiver.dart';
 
 class AuthViewModel extends GetxController {
@@ -33,7 +34,7 @@ class AuthViewModel extends GetxController {
 
   final TextEditingController smsCodeController = TextEditingController();
 
-  String? password, name, phone, city, code;
+  String? password, name, phone, city, code, firebase_token;
 
   final isLogged = false.obs;
   final appMode = 0.obs;
@@ -73,6 +74,20 @@ class AuthViewModel extends GetxController {
       isLogged.value = false;
     }
 
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    messaging.getToken().then((value) {
+      print(value);
+      firebase_token = value;
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      print("message recieved");
+      print(event.notification!.body);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
+    });
+
     _smsReceiver = SmsReceiver(onSmsReceived, onTimeout: onTimeout);
     if (!isLogged.value) {
       _startListening();
@@ -93,7 +108,6 @@ class AuthViewModel extends GetxController {
     var rs = await HttpHelper.get(GET_USER_INFO_ENDPOINT + id);
     if (rs.statusCode == 200) {
       var res = jsonDecode(rs.body);
-      print(rs.body);
       _userModel = UserModel.fromJson(res["user"]);
       _pinnedProperties = await dbHelper.getAllPinnedProperties();
       _userloading.value = false;
@@ -153,6 +167,7 @@ class AuthViewModel extends GetxController {
     request.fields['password'] = password!;
     request.fields['phone'] = phone!;
     request.fields['city'] = city!;
+    request.fields['firebase_token'] = firebase_token!;
 
     var response = await request.send();
 
@@ -168,6 +183,41 @@ class AuthViewModel extends GetxController {
 
       _loading.value = false;
       update();
+    } else {
+      _loading.value = false;
+      update();
+    }
+    // isLogged.value = true;
+  }
+
+  void login() async {
+    _loading.value = true;
+    update();
+    prefs = await SharedPreferences.getInstance();
+    var request = http.MultipartRequest('POST', Uri.parse(LOGIN_ENDPOINT));
+
+    request.fields['password'] = password!;
+    request.fields['phone'] = phone!;
+    request.fields['firebase_token'] = firebase_token!;
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      String respStr = await response.stream.bytesToString();
+      var res = jsonDecode(respStr);
+      if (res["message"] == "success") {
+        prefs.setString("token", res["0"]["token"]);
+        prefs.setString("userId", res["0"]["id"].toString());
+        prefs.setString("phone", phone!);
+        getUserInfo(res["0"]["id"].toString());
+        isLogged.value = true;
+        Get.back();
+        _loading.value = false;
+        update();
+      } else {
+        _loading.value = false;
+        update();
+      }
     } else {
       _loading.value = false;
       update();
