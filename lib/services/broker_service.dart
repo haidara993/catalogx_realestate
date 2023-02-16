@@ -45,6 +45,9 @@ class BrokerService {
     if (rs.statusCode == 200) {
       final respStr = jsonDecode(rs.body);
       properties = [];
+      if (respStr["message"] == false) {
+        return properties;
+      }
       for (var element in respStr["real_states"]) {
         properties.add(Properties.fromJson(element));
       }

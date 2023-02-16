@@ -194,6 +194,7 @@ class PhoneScreen extends GetWidget<AuthViewModel> {
                                   ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
+                                      controller.isRegistered.value = false;
                                       Get.to(PhoneLoginScreen());
                                     }),
                               TextSpan(
@@ -209,6 +210,16 @@ class PhoneScreen extends GetWidget<AuthViewModel> {
                       ],
                     ),
                   ),
+                  Obx(() {
+                    return controller.isRegistered.value == false
+                        ? const SizedBox(
+                            height: 1,
+                          )
+                        : const Text(
+                            "هذا الحساب موجود مسبقا يمكنك تسجيل الدخول.",
+                            style: TextStyle(color: Colors.red),
+                          );
+                  }),
                   SizedBox(
                     height: 40.h,
                   ),

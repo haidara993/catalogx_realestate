@@ -470,6 +470,41 @@ class HomeView2 extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20))),
+                          builder: ((context) => Center(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      "شارك هذا التطبيق مع الأخرين",
+                                      style: TextStyle(fontSize: 19),
+                                    ),
+                                    SizedBox(
+                                      height: 12.h,
+                                    ),
+                                    Text("التطبيق متوفر على"),
+                                    SizedBox(
+                                      height: 20.h,
+                                    ),
+                                    Image.asset(
+                                      'assets/icons/google-play-store.png',
+                                      height: 10.h,
+                                    ),
+                                    SizedBox(
+                                      height: 7.h,
+                                    ),
+                                    Image.asset(
+                                      'assets/icons/google-play-store.png',
+                                      height: 10.h,
+                                    ),
+                                  ],
+                                ),
+                              )));
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border(),

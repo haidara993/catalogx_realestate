@@ -58,6 +58,8 @@ class _MoreViewState extends State<MoreView> with TickerProviderStateMixin {
               name: "الملف الشخصي".tr,
               moreicon: Icons.person,
               onPressed: () {
+                Get.find<AuthViewModel>().getUserInfo(
+                    Get.find<AuthViewModel>().userModel!.id!.toString());
                 Get.to(UserInfo());
               }),
           MoreItemView(
@@ -120,6 +122,7 @@ class _MoreViewState extends State<MoreView> with TickerProviderStateMixin {
             onPressed: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.remove("token");
+              prefs.remove("active");
               Get.find<AuthViewModel>().isLogged.value = false;
               Get.find<ControlViewModel>()
                   .changeSelectedValue2(selectedValue: 2);

@@ -85,7 +85,15 @@ class SmsScreen extends StatelessWidget {
                         SizedBox(
                           height: 15.h,
                         ),
-                        GestureDetector(
+                        const Text(
+                          'اذا لم يصلك كود التفعيل خلال دقيقتين يمكنك اعادة طلبه.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14),
+                        ),
+                        SizedBox(
+                          height: 15.h,
+                        ),
+                        InkWell(
                           onTap: () {
                             authcontroller.resendcode();
                           },

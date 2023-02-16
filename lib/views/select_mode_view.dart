@@ -20,7 +20,7 @@ class SelectModeView extends GetWidget<AuthViewModel> {
                 InkWell(
                   onTap: () {
                     // controller.changeSelectedValue(2);
-                    controller.setMode(1);
+                    // controller.setMode(1);
                     Get.off(ControlView());
                   },
                   child: Card(
@@ -61,7 +61,7 @@ class SelectModeView extends GetWidget<AuthViewModel> {
                 InkWell(
                   onTap: () {
                     // controller.changeSelectedValue(0);
-                    controller.setMode(2);
+                    // controller.setMode(2);
                     Get.off(ControlView());
                   },
                   child: Card(

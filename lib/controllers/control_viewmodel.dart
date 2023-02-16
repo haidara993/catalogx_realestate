@@ -226,6 +226,15 @@ class ControlViewModel extends GetxController
         desiredAccuracy: LocationAccuracy.high);
   }
 
+  void sendPoints(String id, int points) async {
+    var result = await PropertyService().sendPoints(id, points);
+    if (result) {
+      Get.snackbar("", "مبروك لقد تم اهدائك 10 نقاط لقاء مشاركتك هذا العقار.");
+    } else {
+      // Get.snackbar("", "عذرا .");;
+    }
+  }
+
   void _showLocationDeniedDialog() {
     Get.defaultDialog(
         title: "خدمة تحديد الموقع متوقفة",

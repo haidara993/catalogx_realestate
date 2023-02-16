@@ -1,4 +1,7 @@
+import 'package:catalog/controllers/auth_viewmodel.dart';
+import 'package:catalog/controllers/control_viewmodel.dart';
 import 'package:catalog/helpers/bindings.dart';
+import 'package:catalog/services/database/favoraite_database_helper.dart';
 import 'package:catalog/themes/theme_controller.dart';
 import 'package:catalog/themes/themes.dart';
 import 'package:catalog/translations/messages.dart';
@@ -13,7 +16,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 Future<void> _messageHandler(RemoteMessage message) async {
-  print('background message ${message.notification!.body}');
+  FavoriteDatabaseHelper? dbHelper = FavoriteDatabaseHelper.db;
+  dbHelper.deletePinnedProperty(message.data["id"].toString());
+  // print('background message ${message.notification!.body}');
+  // print('background message ${message.data["id"]}');
 }
 
 void main() async {
@@ -32,6 +38,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
   final themeController = Get.put(ThemeController());
+  final controllController = Get.put(ControlViewModel());
+  final authController = Get.put(AuthViewModel());
   @override
   Widget build(BuildContext context) {
     return OrientationBuilder(
@@ -44,7 +52,7 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return GetMaterialApp(
             debugShowCheckedModeBanner: false,
-            title: "catalog",
+            title: "Xouse",
             translations: Messages(),
             locale: const Locale('ar', 'SY'),
             fallbackLocale: const Locale('ar', 'SY'),

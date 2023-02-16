@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:catalog/controllers/saved_search_viewmodel.dart';
 import 'package:catalog/helpers/http_helper.dart';
 import 'package:catalog/models/favorite_property_model.dart';
 import 'package:catalog/models/item_key_model.dart';
@@ -2200,45 +2201,6 @@ class SearchViewModel extends GetxController with SingleGetTickerProviderMixin {
     update();
   }
 
-  Future getProperties() async {
-    _loading.value = true;
-    isLoading(true);
-    var bounds = await _googleMapController.getVisibleRegion();
-    await PropertyService()
-        .getProperties(bounds.northeast.latitude, bounds.northeast.longitude,
-            bounds.southwest.latitude, bounds.southwest.longitude)
-        .then((value) {
-      if (value == null) {
-        _properties = [];
-      } else {
-        _properties = value;
-        _markerList = <Marker>[].obs;
-        for (var i = 0; i < _properties.length; i++) {
-          final mapItem = _properties[i];
-          _markerList.add(
-            Marker(
-              markerId: MarkerId(uuid.v1()),
-              icon: BitmapDescriptor.defaultMarker,
-              position: LatLng(
-                  double.parse(mapItem.lat!), double.parse(mapItem.long!)),
-              onTap: () {
-                Get.find<ControlViewModel>().changeToMidOpen();
-                Get.find<ControlViewModel>().getHomeInfo(mapItem.id!);
-                Get.find<SearchViewModel>().changeSelectedIndex(i);
-              },
-            ),
-          );
-        }
-        return _markerList;
-      }
-      _loading.value = false;
-      isLoading(false);
-      update();
-    });
-  }
-
-  Future<void> getPropertiesForMap() async {}
-
   Future<void> _goToPlace(Place place) async {
     _googleMapController.animateCamera(
       CameraUpdate.newCameraPosition(
@@ -2400,6 +2362,7 @@ class SearchViewModel extends GetxController with SingleGetTickerProviderMixin {
 
     // List<SavedSearch> asd = await dbHelper.getAllSavedSearch();
     // print(asd.length);
+    Get.find<SavedSearchViewModel>().getAllSavedSearchs();
     update();
   }
 

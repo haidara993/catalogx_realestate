@@ -21,6 +21,7 @@ class PropertyService {
   List<Region> regions = [];
   List<City> cities = [];
   late PropertyModel prop;
+  late SharedPreferences prefs;
 
   Future<PropertyModel?> getPropperty(int id) async {
     var rs = await HttpHelper.get(PROPERTY_ENDPOINT + "?id=" + id.toString());
@@ -176,17 +177,25 @@ class PropertyService {
     return "";
   }
 
-  Future<String> sendPoints(String propertyId, int points) async {
-    // ignore: todo
-    // TODO: implement getAll
-    var rs = await HttpHelper.get(
-        SEND_POINTS_ENDPOINT + points.toString() + "&id=" + propertyId);
-    if (rs.statusCode == 200) {
-      var res = jsonDecode(rs.body);
+  Future<bool> sendPoints(String propertyId, int points) async {
+    prefs = await SharedPreferences.getInstance();
+    String jwt = prefs.getString('token')!;
+    var request =
+        http.MultipartRequest('POST', Uri.parse(SEND_POINTS_ENDPOINT));
+    request.headers.addAll({
+      HttpHeaders.authorizationHeader: "Bearer $jwt",
+      HttpHeaders.contentTypeHeader: "multipart/form-data"
+    });
+    request.fields['re_id'] = propertyId;
+    request.fields['points'] = points.toString();
+    var response = await request.send();
 
-      return res["message"];
+    if (response.statusCode == 200) {
+      return true;
+    } else if (response.statusCode == 400) {
+      return false;
     }
-    return "";
+    return false;
   }
 
   Future<List<Direction>> getDirections() async {

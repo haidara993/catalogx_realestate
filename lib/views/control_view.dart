@@ -13,10 +13,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-class ControlView extends GetWidget<ControlViewModel> {
+class ControlView extends StatelessWidget {
   final panelTransation = const Duration(milliseconds: 500);
   final loremIpsum =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
@@ -102,7 +104,8 @@ class ControlView extends GetWidget<ControlViewModel> {
             ? TextDirection.rtl
             : TextDirection.ltr,
         child: Obx(() {
-          return !(Get.find<AuthViewModel>().isLogged.value)
+          return !(Get.find<AuthViewModel>().isLogged.value &&
+                  Get.find<AuthViewModel>().isActive.value)
               ? PhoneScreen()
               : !(Get.find<NetworkController>().connectionStatus.value == 1 ||
                       Get.find<NetworkController>().connectionStatus.value == 2)
@@ -326,11 +329,59 @@ class ControlView extends GetWidget<ControlViewModel> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Column(
-                      children: [const Icon(Icons.share), Text("share".tr)],
+                    GestureDetector(
+                      onTap: () async {
+                        String generatedDeepLink =
+                            // ignore: prefer_interpolation_to_compose_strings
+                            "https://haidara993.github.io/#/homeinfo/" +
+                                Get.find<ControlViewModel>()
+                                    .home
+                                    .realEstate!
+                                    .id!
+                                    .toString();
+                        //     await FirebaseDynamicLinkService
+                        //         .createDynamicLink(
+                        //             false,
+                        //             homeController.home
+                        //                 .realEstate!.id!);
+                        Share.share(generatedDeepLink).then((value) =>
+                            Get.find<ControlViewModel>().sendPoints(
+                                Get.find<AuthViewModel>()
+                                    .userModel!
+                                    .id!
+                                    .toString(),
+                                10));
+                      },
+                      child: const Icon(
+                        Icons.share,
+                        size: 35,
+                      ),
                     ),
-                    Column(
-                      children: [const Icon(Icons.print), Text("print".tr)],
+                    GestureDetector(
+                      onTap: () {
+                        Get.defaultDialog(
+                          title: 'امسح رمز QR',
+                          content: Container(
+                            height: 200.h,
+                            width: 200.w,
+                            padding: const EdgeInsets.all(8.0),
+                            child: QrImage(
+                              data: "https://haidara993.github.io/#/homeinfo/" +
+                                  Get.find<ControlViewModel>()
+                                      .home
+                                      .realEstate!
+                                      .id!
+                                      .toString(),
+                              version: QrVersions.auto,
+                              size: 200.0,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Icon(
+                        Icons.qr_code,
+                        size: 35,
+                      ),
                     ),
                   ],
                 ),

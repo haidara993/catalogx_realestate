@@ -1,3 +1,4 @@
+import 'package:catalog/controllers/auth_viewmodel.dart';
 import 'package:catalog/controllers/firebase_dynamic_link.dart';
 import 'package:catalog/controllers/home_info_controller.dart';
 import 'package:catalog/controllers/search_viewmodel.dart';
@@ -497,14 +498,16 @@ class PropertyInfo extends GetWidget<HomeInfoController> {
                                                     homeController
                                                         .home.realEstate!.id!
                                                         .toString();
-                                            //     await FirebaseDynamicLinkService
-                                            //         .createDynamicLink(
-                                            //             false,
-                                            //             homeController.home
-                                            //                 .realEstate!.id!);
+
                                             Share.share(generatedDeepLink).then(
-                                                (value) => homeController
-                                                    .sendPoints("23", 10));
+                                                (value) =>
+                                                    homeController.sendPoints(
+                                                        Get.find<
+                                                                AuthViewModel>()
+                                                            .userModel!
+                                                            .id!
+                                                            .toString(),
+                                                        10));
                                           },
                                           child: const Icon(
                                             Icons.share,

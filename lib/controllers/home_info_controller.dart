@@ -180,11 +180,10 @@ class HomeInfoController extends GetxController {
 
   void sendPoints(String id, int points) async {
     var result = await PropertyService().sendPoints(id, points);
-    if (result == "success") {
-      Get.snackbar("", "مبروك لقد تم اهدائك 10 نقاط لقاء مشاركتك التطبيق.");
+    if (result) {
+      Get.snackbar("", "مبروك لقد تم اهدائك 10 نقاط لقاء مشاركتك هذا العقار.");
     } else {
-      // Get.snackbar("", "عذرا .")ك
-
+      // Get.snackbar("", "عذرا .");;
     }
   }
 

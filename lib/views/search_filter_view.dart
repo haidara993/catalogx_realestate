@@ -3593,22 +3593,6 @@ class SearchFilterView extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            // Container(
-                            //   height: 35.h,
-                            //   width:
-                            //       (MediaQuery.of(context).size.width / 2) - 10,
-                            //   decoration: BoxDecoration(
-                            //     color: Colors.grey,
-                            //     borderRadius: BorderRadius.circular(5),
-                            //   ),
-                            //   child: Center(
-                            //     child: Text("reset".tr,
-                            //         style: TextStyle(
-                            //           fontSize: 20.sp,
-                            //           fontWeight: FontWeight.bold,
-                            //         )),
-                            //   ),
-                            // ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 fixedSize: Size(Get.width * .9, 50),
@@ -3616,8 +3600,7 @@ class SearchFilterView extends StatelessWidget {
                               onPressed: () {
                                 if (searchController
                                     .directionmultiValid.value) {
-                                  Get.find<SearchViewModel>()
-                                      .filterWithoutmapProperty();
+                                  Get.find<SearchViewModel>().filterProperty();
                                 }
                               },
                               child: Center(

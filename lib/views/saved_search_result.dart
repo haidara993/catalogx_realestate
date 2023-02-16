@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:catalog/controllers/auth_viewmodel.dart';
 import 'package:catalog/controllers/control_viewmodel.dart';
 import 'package:catalog/controllers/favorite_view_model.dart';
 import 'package:catalog/controllers/saved_search_viewmodel.dart';
@@ -22,6 +23,8 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:http/http.dart' as http;
 import 'package:like_button/like_button.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uuid/uuid.dart';
@@ -860,11 +863,59 @@ class SavedSearchResult extends GetWidget<SavedSearchViewModel> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Column(
-                      children: [const Icon(Icons.share), Text("share".tr)],
+                    GestureDetector(
+                      onTap: () async {
+                        String generatedDeepLink =
+                            // ignore: prefer_interpolation_to_compose_strings
+                            "https://haidara993.github.io/#/homeinfo/" +
+                                Get.find<SavedSearchViewModel>()
+                                    .home
+                                    .realEstate!
+                                    .id!
+                                    .toString();
+                        //     await FirebaseDynamicLinkService
+                        //         .createDynamicLink(
+                        //             false,
+                        //             homeController.home
+                        //                 .realEstate!.id!);
+                        Share.share(generatedDeepLink).then((value) =>
+                            Get.find<ControlViewModel>().sendPoints(
+                                Get.find<AuthViewModel>()
+                                    .userModel!
+                                    .id!
+                                    .toString(),
+                                10));
+                      },
+                      child: const Icon(
+                        Icons.share,
+                        size: 35,
+                      ),
                     ),
-                    Column(
-                      children: [const Icon(Icons.print), Text("print".tr)],
+                    GestureDetector(
+                      onTap: () {
+                        Get.defaultDialog(
+                          title: 'امسح رمز QR',
+                          content: Container(
+                            height: 200.h,
+                            width: 200.w,
+                            padding: const EdgeInsets.all(8.0),
+                            child: QrImage(
+                              data: "https://haidara993.github.io/#/homeinfo/" +
+                                  Get.find<SavedSearchViewModel>()
+                                      .home
+                                      .realEstate!
+                                      .id!
+                                      .toString(),
+                              version: QrVersions.auto,
+                              size: 200.0,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Icon(
+                        Icons.qr_code,
+                        size: 35,
+                      ),
                     ),
                   ],
                 ),

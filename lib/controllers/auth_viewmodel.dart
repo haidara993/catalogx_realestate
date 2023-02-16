@@ -6,6 +6,7 @@ import 'package:catalog/helpers/http_helper.dart';
 import 'package:catalog/models/pinned_estate.dart';
 import 'package:catalog/models/user_model.dart';
 import 'package:catalog/services/database/favoraite_database_helper.dart';
+import 'package:catalog/views/control_view.dart';
 import 'package:catalog/views/sms_screen.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -37,7 +38,8 @@ class AuthViewModel extends GetxController {
   String? password, name, phone, city, code, firebase_token;
 
   final isLogged = false.obs;
-  final appMode = 0.obs;
+  final isActive = false.obs;
+  final isRegistered = false.obs;
 
   late SharedPreferences prefs;
 
@@ -65,6 +67,13 @@ class AuthViewModel extends GetxController {
             .isAfter(DateTime.now())) {
           isLogged.value = true;
           var userId = prefs.getString("userId");
+          var isactive = false;
+          if (prefs.getBool("active") == null) {
+            isactive = false;
+          } else {
+            isactive = prefs.getBool("active")!;
+          }
+          isActive.value = isactive ? true : false;
           getUserInfo(userId!);
         } else {
           isLogged.value = false;
@@ -80,9 +89,16 @@ class AuthViewModel extends GetxController {
       firebase_token = value;
     });
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      print("message recieved");
-      print(event.notification!.body);
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
+      FavoriteDatabaseHelper? dbHelper = FavoriteDatabaseHelper.db;
+      dbHelper.deletePinnedProperty(event.data["id"].toString());
+      _pinnedProperties = await dbHelper.getAllPinnedProperties();
+      update();
+      // print("message recieved");
+      // print(event.notification!.body);
+      // print(event.notification!.bodyLocArgs);
+      // print(event.data);
+      // print(event.data["id"]);
     });
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('Message clicked!');
@@ -152,11 +168,6 @@ class AuthViewModel extends GetxController {
     update();
   }
 
-  void setMode(int mode) {
-    appMode.value = mode;
-    prefs.setInt("appMode", mode);
-  }
-
   void register() async {
     _loading.value = true;
     update();
@@ -179,8 +190,12 @@ class AuthViewModel extends GetxController {
       prefs.setString("userId", res["success"]["id"].toString());
       prefs.setString("phone", phone!);
       getUserInfo(res["success"]["id"].toString());
-      Get.to(SmsScreen());
-
+      Get.off(SmsScreen());
+      isLogged.value = true;
+      _loading.value = false;
+      update();
+    } else if (response.statusCode == 400) {
+      isRegistered.value = true;
       _loading.value = false;
       update();
     } else {
@@ -214,7 +229,16 @@ class AuthViewModel extends GetxController {
         Get.back();
         _loading.value = false;
         update();
-      } else {
+      } else if (res["message"] == "user is not active") {
+        prefs.setString("token", res["0"]["token"]);
+        prefs.setString("userId", res["0"]["id"].toString());
+        prefs.setString("phone", phone!);
+        getUserInfo(res["0"]["id"].toString());
+        isLogged.value = true;
+        var request = http.MultipartRequest('POST', Uri.parse(RESEND_ENDPOINT));
+        request.fields['phone'] = phone!;
+        var response = await request.send();
+        Get.off(SmsScreen());
         _loading.value = false;
         update();
       }
@@ -252,9 +276,9 @@ class AuthViewModel extends GetxController {
     var response = await request.send();
 
     if (response.statusCode == 200) {
-      print("asdasd");
-      isLogged.value = true;
-      Get.back();
+      prefs.setBool("active", true);
+      isActive.value = true;
+      Get.off(ControlView());
       _loading.value = false;
       update();
     } else {
